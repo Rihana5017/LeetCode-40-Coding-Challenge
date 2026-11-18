@@ -1,0 +1,49 @@
+void backtrack(int* candidates, int n, int target,
+               int start, int* path, int pathSize,
+               int** result, int* returnSize,
+               int** returnColumnSizes) {
+
+    if (target == 0) {
+        result[*returnSize] =
+            (int*)malloc(pathSize * sizeof(int));
+
+        for (int i = 0; i < pathSize; i++) {
+            result[*returnSize][i] = path[i];
+        }
+
+        (*returnColumnSizes)[*returnSize] = pathSize;
+        (*returnSize)++;
+        return;
+    }
+
+    for (int i = start; i < n; i++) {
+
+        if (candidates[i] > target)
+            continue;
+
+        path[pathSize] = candidates[i];
+
+        backtrack(candidates, n, target - candidates[i],
+                  i, path, pathSize + 1,
+                  result, returnSize, returnColumnSizes);
+    }
+}
+
+int** combinationSum(int* candidates, int candidatesSize,
+                     int target, int* returnSize,
+                     int** returnColumnSizes) {
+
+    int** result = (int**)malloc(1500 * sizeof(int*));
+    *returnColumnSizes = (int*)malloc(1500 * sizeof(int));
+
+    *returnSize = 0;
+
+    int* path = (int*)malloc(1500 * sizeof(int));
+
+    backtrack(candidates, candidatesSize, target, 0,
+              path, 0, result, returnSize, returnColumnSizes);
+
+    free(path);
+
+    return result;
+}
