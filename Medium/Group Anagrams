@@ -1,0 +1,57 @@
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX 10000
+
+int compare(const void *a, const void *b) {
+    return (*(char *)a - *(char *)b);
+}
+
+char*** groupAnagrams(char** strs, int strsSize,
+                      int* returnSize,
+                      int** returnColumnSizes) {
+
+    char*** result = malloc(MAX * sizeof(char**));
+    *returnColumnSizes = malloc(MAX * sizeof(int));
+
+    int count = 0;
+
+    char keys[MAX][101];
+
+    for (int i = 0; i < strsSize; i++) {
+
+        char temp[101];
+        strcpy(temp, strs[i]);
+
+        qsort(temp, strlen(temp), sizeof(char), compare);
+
+        int found = -1;
+
+        for (int j = 0; j < count; j++) {
+            if (strcmp(keys[j], temp) == 0) {
+                found = j;
+                break;
+            }
+        }
+
+        if (found == -1) {
+            found = count;
+            strcpy(keys[count], temp);
+
+            result[count] = malloc(strsSize * sizeof(char*));
+            (*returnColumnSizes)[count] = 0;
+            count++;
+        }
+
+        int k = (*returnColumnSizes)[found];
+
+        result[found][k] = malloc(strlen(strs[i]) + 1);
+        strcpy(result[found][k], strs[i]);
+
+        (*returnColumnSizes)[found]++;
+    }
+
+    *returnSize = count;
+
+    return result;
+}
