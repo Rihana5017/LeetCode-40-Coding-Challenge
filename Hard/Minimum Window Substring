@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* minWindow(char* s, char* t) {
+
+    int need[256] = {0};
+    int window[256] = {0};
+
+    int n = strlen(s);
+    int m = strlen(t);
+
+    if (m == 0 || n < m)
+        return "";
+
+    for (int i = 0; i < m; i++) {
+        need[(unsigned char)t[i]]++;
+    }
+
+    int left = 0;
+    int formed = 0;
+
+    int minLen = n + 1;
+    int start = 0;
+
+    for (int right = 0; right < n; right++) {
+
+        unsigned char c = s[right];
+
+        window[c]++;
+
+        if (window[c] <= need[c]) {
+            formed++;
+        }
+
+        while (formed == m) {
+
+            if (right - left + 1 < minLen) {
+                minLen = right - left + 1;
+                start = left;
+            }
+
+            unsigned char ch = s[left];
+
+            if (window[ch] <= need[ch]) {
+                formed--;
+            }
+
+            window[ch]--;
+            left++;
+        }
+    }
+
+    if (minLen == n + 1)
+        return "";
+
+    char* result = malloc(minLen + 1);
+
+    strncpy(result, s + start, minLen);
+    result[minLen] = '\0';
+
+    return result;
+}
