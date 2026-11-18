@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int ladderLength(char* beginWord, char* endWord,
+                 char** wordList, int wordListSize) {
+
+    int len = strlen(beginWord);
+
+    int *visited = calloc(wordListSize, sizeof(int));
+
+    char **queue = malloc((wordListSize + 1) * sizeof(char*));
+
+    int front = 0, rear = 0;
+
+    queue[rear++] = beginWord;
+
+    int level = 1;
+
+    while (front < rear) {
+
+        int size = rear - front;
+
+        for (int k = 0; k < size; k++) {
+
+            char *word = queue[front++];
+
+            if (strcmp(word, endWord) == 0) {
+                free(visited);
+                free(queue);
+                return level;
+            }
+
+            char temp[len + 1];
+            strcpy(temp, word);
+
+            for (int i = 0; i < len; i++) {
+
+                char original = temp[i];
+
+                for (char c = 'a'; c <= 'z'; c++) {
+
+                    if (c == original)
+                        continue;
+
+                    temp[i] = c;
+
+                    for (int j = 0; j < wordListSize; j++) {
+
+                        if (!visited[j] &&
+                            strcmp(temp, wordList[j]) == 0) {
+
+                            visited[j] = 1;
+                            queue[rear++] = wordList[j];
+                        }
+                    }
+                }
+
+                temp[i] = original;
+            }
+        }
+
+        level++;
+    }
+
+    free(visited);
+    free(queue);
+
+    return 0;
+}
